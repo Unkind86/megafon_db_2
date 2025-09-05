@@ -1,0 +1,93 @@
+--There are some functions
+
+
+--
+-- Name: add_employee(text, text, text, numeric); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.add_employee(e_first_name text, e_last_name text, e_middle_name text, e_permission_level numeric) RETURNS void
+    LANGUAGE sql
+    AS $$
+INSERT INTO employees (first_name, last_name, middle_name, permission_level) 
+VALUES (e_first_name, e_last_name, e_middle_name, e_permission_level) $$;
+
+
+ALTER FUNCTION public.add_employee(e_first_name text, e_last_name text, e_middle_name text, e_permission_level numeric) OWNER TO amin1;
+
+
+--
+-- Name: add_passports(text, character varying, character varying, character varying, character varying, date, character varying, date, date, numeric); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.add_passports(p_first_name text, p_last_name character varying, p_middle_name character varying, p_gender character varying, p_nationality character varying, p_date_of_birth date, p_place_of_birth character varying, p_date_of_issue date, p_date_of_expiry date, p_national_numb numeric) RETURNS void
+    LANGUAGE sql
+    AS $$
+INSERT INTO passports (first_name, last_name , middle_name, gender, nationality, date_of_birth, place_of_birth, date_of_issue, date_of_expiry, national_numb) 
+VALUES (p_first_name, p_last_name, p_middle_name, p_gender, p_nationality, p_date_of_birth, p_place_of_birth, p_date_of_issue, p_date_of_expiry, p_national_numb) $$;
+
+
+ALTER FUNCTION public.add_passports(p_first_name text, p_last_name character varying, p_middle_name character varying, p_gender character varying, p_nationality character varying, p_date_of_birth date, p_place_of_birth character varying, p_date_of_issue date, p_date_of_expiry date, p_national_numb numeric) OWNER TO amin1;
+
+
+--
+-- Name: add_users(text, text, text, numeric, numeric, numeric); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.add_users(u_first_name text, u_last_name text, u_middle_name text, u_phone_number numeric, u_balance numeric, u_tarif_id numeric) RETURNS void
+    LANGUAGE sql
+    AS $$
+INSERT INTO users (first_name, last_name, middle_name, phone_number, balance, tarif_id) 
+VALUES (u_first_name, u_last_name, u_middle_name, u_phone_number, u_balance, u_tarif_id) $$;
+
+
+ALTER FUNCTION public.add_users(u_first_name text, u_last_name text, u_middle_name text, u_phone_number numeric, u_balance numeric, u_tarif_id numeric) OWNER TO amin1;
+
+
+--
+-- Name: change_tarif(character varying, integer); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.change_tarif(t_phone_number character varying, t_new_tarif_id integer) RETURNS void
+    LANGUAGE sql
+    AS $$ 
+UPDATE users SET tarif_id = t_new_tarif_id WHERE phone_number = t_phone_number $$;
+
+
+ALTER FUNCTION public.change_tarif(t_phone_number character varying, t_new_tarif_id integer) OWNER TO amin1;
+
+
+--
+-- Name: update_balance(character varying, numeric); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.update_balance(b_phone_number character varying, b_amount numeric) RETURNS void
+    LANGUAGE sql
+    AS $$ 
+UPDATE users SET balance = balance + b_amount WHERE phone_number = b_phone_number $$;
+
+
+ALTER FUNCTION public.update_balance(b_phone_number character varying, b_amount numeric) OWNER TO amin1;
+
+
+--
+-- Name: user_info(text, text, text); Type: FUNCTION; Schema: public; Owner: amin1
+--
+
+CREATE FUNCTION public.user_info(p_first_name text, p_last_name text, p_phone_number text) RETURNS TABLE(id bigint, first_name text, last_name text, middle_name text, phone_number text, balance numeric, tarif_id integer)
+    LANGUAGE sql
+    AS $$ SELECT * FROM users WHERE 
+first_name = p_first_name 
+AND p_last_name = last_name 
+AND p_phone_number = phone_number; $$;
+
+
+ALTER FUNCTION public.user_info(p_first_name text, p_last_name text, p_phone_number text) OWNER TO amin1;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+
+
+--P.S: I will create more better function)
+
