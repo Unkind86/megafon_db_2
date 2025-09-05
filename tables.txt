@@ -1,0 +1,297 @@
+-- There are all tables with their parameters
+
+
+
+CREATE TABLE public.employees (
+    id integer NOT NULL,
+    first_name character varying(16) NOT NULL,
+    last_name character varying(32) NOT NULL,
+    middle_name character varying(32) DEFAULT ' '::character varying,
+    permission_level numeric DEFAULT '0'::numeric,
+    passport_id integer
+);
+
+
+--
+-- Name: employees_id_seq; Type: SEQUENCE; Schema: public; Owner: amin1
+--
+
+CREATE SEQUENCE public.employees_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.employees_id_seq OWNER TO amin1;
+
+--
+-- Name: employees_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: amin1
+--
+
+ALTER SEQUENCE public.employees_id_seq OWNED BY public.employees.id;
+
+
+
+
+--Passports
+
+CREATE TABLE public.passports (
+    id integer NOT NULL,
+    serial character varying NOT NULL,
+    first_name character varying(16),
+    last_name character varying(32),
+    middle_name character varying(32),
+    gender character varying NOT NULL,
+    nationality character varying(32) NOT NULL,
+    date_of_birth date NOT NULL,
+    place_of_birth character varying(16) NOT NULL,
+    date_of_issue date NOT NULL,
+    date_of_expiry date NOT NULL,
+    national_numb numeric NOT NULL,
+    CONSTRAINT first_name_only_letters CHECK (((first_name)::text ~ '[A-Za-zА-Яа-яЁё]+$'::text)),
+    CONSTRAINT gender_check CHECK (((gender)::text = ANY ((ARRAY['Female'::character varying, 'Male'::character varying])::text[]))),
+    CONSTRAINT last_name_only_letters CHECK (((last_name)::text ~ '[A-Za-zА-Яа-яЁё]+$'::text)),
+    CONSTRAINT middle_name_only_letters CHECK (((middle_name)::text ~ '[A-Za-zА-Яа-яЁё]+$'::text))
+);
+
+
+
+--
+-- Name: passports_id_seq; Type: SEQUENCE; Schema: public; Owner: amin1
+--
+
+CREATE SEQUENCE public.passports_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.passports_id_seq OWNER TO amin1;
+
+--
+-- Name: passports_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: amin1
+--
+
+ALTER SEQUENCE public.passports_id_seq OWNED BY public.passports.id;
+
+
+
+--Tariфы
+
+CREATE TABLE public.tarifs (
+    id integer NOT NULL,
+    tarif_name character varying(16) NOT NULL,
+    megabytes numeric NOT NULL,
+    minutes numeric NOT NULL,
+    night_bezlimit boolean,
+    price numeric NOT NULL
+);
+
+
+--
+-- Name: tarifs_id_seq; Type: SEQUENCE; Schema: public; Owner: amin1
+--
+
+CREATE SEQUENCE public.tarifs_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.tarifs_id_seq OWNER TO amin1;
+
+--
+-- Name: tarifs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: amin1
+--
+
+ALTER SEQUENCE public.tarifs_id_seq OWNED BY public.tarifs.id;
+
+
+
+
+--Users
+
+CREATE TABLE public.users (
+    id bigint NOT NULL,
+    phone_number character varying(9) NOT NULL,
+    balance numeric DEFAULT 0 NOT NULL,
+    tarif_id integer,
+    passport_id integer
+);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: amin1
+--
+
+CREATE SEQUENCE public.users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO amin1;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: amin1
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+
+
+-- Some seq
+
+--
+-- Name: employees id; Type: DEFAULT; Schema: public; Owner: amin1
+--
+
+ALTER TABLE ONLY public.employees ALTER COLUMN id SET DEFAULT nextval('public.employees_id_seq'::regclass);
+
+
+--
+-- Name: passports id; Type: DEFAULT; Schema: public; Owner: amin1
+--
+
+ALTER TABLE ONLY public.passports ALTER COLUMN id SET DEFAULT nextval('public.passports_id_seq'::regclass);
+
+
+--
+-- Name: tarifs id; Type: DEFAULT; Schema: public; Owner: amin1
+--
+
+ALTER TABLE ONLY public.tarifs ALTER COLUMN id SET DEFAULT nextval('public.tarifs_id_seq'::regclass);
+
+
+--
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: amin1
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: employees_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.employees_id_seq', 4, true);
+
+
+--
+-- Name: passports_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.passports_id_seq', 3, true);
+
+
+--
+-- Name: tarifs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.tarifs_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 143, true);
+
+
+
+
+
+
+-- More parameters
+
+ALTER TABLE ONLY public.employees
+    ADD CONSTRAINT employees_pkey PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY public.passports
+    ADD CONSTRAINT passports_pkey PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY public.passports
+    ADD CONSTRAINT passports_serial_key UNIQUE (serial);
+
+
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT phone_numbers_unique UNIQUE (phone_number);
+
+
+ALTER TABLE ONLY public.tarifs
+    ADD CONSTRAINT tarifs_pkey PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+ALTER TABLE ONLY public.passports
+    ADD CONSTRAINT fk_passport_user FOREIGN KEY (id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+ALTER TABLE ONLY public.employees
+    ADD CONSTRAINT fk_employees_passports FOREIGN KEY (passport_id) REFERENCES public.passports(id);
+
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_passports FOREIGN KEY (passport_id) REFERENCES public.passports(id);
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT fk_users_tarifs FOREIGN KEY (tarif_id) REFERENCES public.tarifs(id);
+
+
+
+--
+-- Name: employees_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.employees_id_seq', 4, true);
+
+
+--
+-- Name: passports_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.passports_id_seq', 3, true);
+
+
+--
+-- Name: tarifs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.tarifs_id_seq', 3, true);
+
+
+--
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: amin1
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 143, true);
+
+
+
+--
+-- Name: passports passports_serial_key; Type: CONSTRAINT; Schema: public; Owner: amin1
+--
+
+ALTER TABLE ONLY public.passports
+    ADD CONSTRAINT passports_serial_key UNIQUE (serial);
+
+
+
